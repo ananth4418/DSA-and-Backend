@@ -1,0 +1,67 @@
+import java.util.Random;
+class Solution {
+
+    public int[] quickSort(int[] nums) 
+    {
+        int n=nums.length;
+        quickSortHelper(nums,0,n-1);
+        return nums;
+        
+    }
+    static int partition(int[] arr,int low,int high)
+    {
+        Random random=new Random();
+        int randomIndex=low+random.nextInt(high-low+1);
+
+        int temp=arr[low];
+        arr[low]=arr[randomIndex];
+        arr[randomIndex]=temp;
+
+        int pivot=arr[low];
+        int i=low+1;
+        int j=high;
+
+        while(i<=j)
+        {
+            while(i<=high && arr[i]<pivot)
+            {
+                i++;
+            }
+            while(j>=low && arr[j]>pivot )
+            {
+                j--;
+            }
+
+            if(i<j)
+            {
+                temp=arr[i];
+                arr[i]=arr[j];
+                arr[j]=temp;
+                i++;
+                j--;
+                
+            }
+            else
+            {
+                break;
+            }
+        
+        }
+        temp=arr[low];
+        arr[low]=arr[j];
+        arr[j]=temp;
+
+        return j;
+    
+    }
+    static void quickSortHelper(int[] arr,int low,int high)
+    {
+        if(low<high)
+        {
+            int partitionIndex=partition(arr,low,high);
+
+            quickSortHelper(arr,low,partitionIndex-1);
+            quickSortHelper(arr,partitionIndex+1,high); 
+        }
+    }
+}
