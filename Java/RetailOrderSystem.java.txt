@@ -1,0 +1,84 @@
+import java.util.ArrayList;
+import java.util.List;
+
+abstract class Product {
+    private String id;
+    private String name;
+    private double price;
+
+    public Product(String id, String name, double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    public double getPrice() { return price; }
+    public String getName() { return name; }
+
+    public abstract void displayDetails();
+}
+
+class Electronics extends Product {
+    private int warrantyMonths;
+
+    public Electronics(String id, String name, double price, int warrantyMonths) {
+        super(id, name, price); // Calling the parent constructor
+        this.warrantyMonths = warrantyMonths;
+    }
+
+        @Override
+    public void displayDetails() {
+        System.out.println("Electronics: " + getName() + " | Price: ₹" + getPrice() + " | Warranty: " + warrantyMonths + " months");
+    }
+}
+
+class Clothing extends Product {
+    private String size;
+
+    public Clothing(String id, String name, double price, String size) {
+        super(id, name, price);
+        this.size = size;
+    }
+
+    @Override
+    public void displayDetails() {
+        System.out.println("Clothing: " + getName() + " | Price: ₹" + getPrice() + " | Size: " + size);
+    }
+}
+
+class ShoppingCart {
+    private List<Product> items = new ArrayList<>();
+
+    public void addProduct(Product p) {
+        items.add(p);
+        System.out.println(p.getName() + " added to the cart.");
+    }
+
+    public double calculateTotal()
+    {
+       return items.stream().mapToDouble(Product::getPrice).sum();
+    }
+
+    public void generateInvoice() {
+        System.out.println("\n--- Retail Order Summary ---");
+        for (Product item : items) {
+            item.displayDetails(); // Polymorphic call
+        }
+        System.out.println("----------------------------");
+        System.out.println("Total Amount: ₹" + calculateTotal());
+    }
+}
+
+public class RetailOrderSystem {
+    public static void main(String[] args) {
+        ShoppingCart cart = new ShoppingCart();
+        
+        Product devLaptop = new Electronics("E-101", "Developer Workstation", 85000.00, 36);
+        Product casualShirt = new Clothing("C-202", "Graphic T-Shirt", 999.00, "L");
+
+        cart.addProduct(devLaptop);
+        cart.addProduct(casualShirt);
+        
+        cart.generateInvoice();
+    }
+}
