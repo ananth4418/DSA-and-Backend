@@ -1,0 +1,74 @@
+public class PaymentProcessor {
+
+    // 1. Abstraction (Interface defining the contract)
+    interface Payment {
+        void processPayment(double amount);
+        String getTransactionDetails();
+    }
+
+    // 2. Encapsulation & Inheritance (Abstract Class holding common state)
+    abstract static class AbstractPayment implements Payment {
+        private final String transactionId;
+        private final String timestamp;
+
+        public AbstractPayment(String transactionId, String timestamp) {
+            this.transactionId = transactionId;
+            this.timestamp = timestamp;
+        }
+
+        public String getTransactionId() {
+            return transactionId;
+        }
+
+        @Override
+        public String getTransactionDetails() {
+            return "Txn ID: " + transactionId + " | Time: " + timestamp;
+        }
+    }
+
+    // 3. Inheritance & Polymorphism (Concrete Implementation 1)
+    static class UpiPayment extends AbstractPayment {
+        private final String upiId;
+
+        public UpiPayment(String transactionId, String timestamp, String upiId) {
+            super(transactionId, timestamp);
+            this.upiId = upiId;
+        }
+
+        @Override
+        public void processPayment(double amount) {
+            System.out.println("Processing UPI payment of ₹" + amount + " for UPI ID: " + upiId);
+        }
+    }
+
+    // 3. Inheritance & Polymorphism (Concrete Implementation 2)
+    static class CreditCardPayment extends AbstractPayment {
+        private final String maskedCardNumber;
+
+        public CreditCardPayment(String transactionId, String timestamp, String maskedCardNumber) {
+            super(transactionId, timestamp);
+            this.maskedCardNumber = maskedCardNumber;
+        }
+
+        @Override
+        public void processPayment(double amount) {
+            System.out.println("Processing Credit Card payment of ₹" + amount + " for card: " + maskedCardNumber);
+        }
+    }
+
+    public static void main(String[] args) {
+        // Simulating incoming retail data transactions
+        Payment upiTxn = new UpiPayment("TXN987654", "2026-11-17 10:00:00", "user@ybl");
+        Payment cardTxn = new CreditCardPayment("TXN123456", "2026-11-17 10:05:00", "****-****-****-1234");
+
+        executeTransaction(upiTxn, 1500.50);
+        executeTransaction(cardTxn, 4999.00);
+    }
+
+    // Demonstrates runtime polymorphism (method accepts the interface, not the concrete classes)
+    private static void executeTransaction(Payment payment, double amount) {
+        payment.processPayment(amount);
+        System.out.println("Details: " + payment.getTransactionDetails());
+        System.out.println("-------------------------------------------------");
+    }
+}
