@@ -1,0 +1,75 @@
+import java.util.Arrays;
+import java.util.List;
+
+public class OrderNotificationDemo {
+
+        static class Customer {
+        private final String name;
+        private final String email;
+        private final String phone;
+
+        public Customer(String name, String email, String phone) {
+            this.name = name;
+            this.email = email;
+            this.phone = phone;
+        }
+
+        public String getName() { return name; }
+        public String getEmail() { return email; }
+        public String getPhone() { return phone; }
+    }
+
+       interface NotificationChannel {
+        void send(Customer customer, String message);
+    }
+
+       static class EmailNotification implements NotificationChannel {
+        @Override
+        public void send(Customer customer, String message) {
+            System.out.println("[EMAIL] To: " + customer.getEmail() + " | Msg: " + message);
+        }
+    }
+
+    static class SmsNotification implements NotificationChannel {
+        @Override
+        public void send(Customer customer, String message) {
+            System.out.println("[SMS]   To: " + customer.getPhone() + " | Msg: " + message);
+        }
+    }
+
+    static class PushNotification implements NotificationChannel {
+        @Override
+        public void send(Customer customer, String message) {
+            System.out.println("[PUSH]  To: " + customer.getName() + "'s Device | Msg: " + message);
+        }
+    }
+
+       static class OrderService {
+        private final List<NotificationChannel> channels;
+
+        public OrderService(List<NotificationChannel> channels) {
+            this.channels = channels;
+        }
+
+        public void placeOrder(String orderId, Customer customer) {
+            System.out.println("Order " + orderId + " confirmed for " + customer.getName() + ".");
+            String alert = "Your order " + orderId + " has been placed successfully.";
+            for (NotificationChannel channel : channels) {
+                channel.send(customer, alert);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Customer customer = new Customer("Rahul", "rahul@example.com", "+91-9876543210");
+
+               List<NotificationChannel> activeChannels = Arrays.asList(
+            new EmailNotification(),
+            new SmsNotification(),
+            new PushNotification()
+        );
+
+        OrderService orderService = new OrderService(activeChannels);
+        orderService.placeOrder("ORD-2026-1118", customer);
+    }
+}
